@@ -1,6 +1,12 @@
 package academy.devdojo.springboot2.service;
 
 import academy.devdojo.springboot2.domain.Anime;
+import academy.devdojo.springboot2.repository.AnimeRepository;
+import academy.devdojo.springboot2.requests.AnimePostRequestBody;
+import academy.devdojo.springboot2.requests.AnimePutRequestBody;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -8,19 +14,34 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
+@Log4j2
+@RequiredArgsConstructor
 public class AnimeService {
 
-    // private AnimeRepository animeRepository
-    private final List<Anime> animes = List.of(new Anime(1L, "Boku no Hero"), new Anime(2L, "Berserk"));
+    private final ModelMapper mapper;
+    private final AnimeRepository animeRepository;
 
     public List<Anime> listAll() {
-        return animes;
+        return animeRepository.findAll();
     }
 
-    public Anime findById(Long id) {
-        return animes.stream()
-                .filter(anime -> anime.getId().equals(id))
-                .findFirst()
+    public Anime findByIdOrThrowBadRequestException(Long id) {
+        return animeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Anime not found."));
+    }
+
+    public Anime save(AnimePostRequestBody anime) {
+        return animeRepository.save(mapper.map(anime, Anime.class));
+    }
+
+    public void delete(Long id) {
+        animeRepository.delete(findByIdOrThrowBadRequestException(id));
+    }
+
+    public void replace(AnimePutRequestBody animePutRequestBody) {
+        var savedAnime = findByIdOrThrowBadRequestException(animePutRequestBody.getId());
+        var anime = mapper.map(animePutRequestBody, Anime.class);
+        anime.setId(savedAnime.getId());
+        animeRepository.save(anime);
     }
 }
