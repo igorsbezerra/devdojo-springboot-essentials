@@ -10,6 +10,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
@@ -33,6 +34,7 @@ public class AnimeService {
                 .orElseThrow(() -> new BadRequestException("Anime not found."));
     }
 
+    @Transactional
     public Anime save(AnimePostRequestBody anime) {
         return animeRepository.save(mapper.map(anime, Anime.class));
     }
