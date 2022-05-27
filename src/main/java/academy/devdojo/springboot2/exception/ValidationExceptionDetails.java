@@ -6,7 +6,7 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 public class ValidationExceptionDetails extends ExceptionDetails {
     private final String fields;
     private final String fieldsMessage;
