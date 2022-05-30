@@ -17,3 +17,14 @@ logging:
     org:
       hibernate:
         SQL: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+info:
+  app: String Boot 2 Essentials by DevDojo
+  website: http://localhost:8080
+  github: https://github.com/igorsbezerra/devdojo-springboot-essentials
